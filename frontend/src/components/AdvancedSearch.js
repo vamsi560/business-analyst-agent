@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
@@ -119,9 +120,9 @@ const AdvancedSearch = ({
     return Array.from(values).sort();
   };
 
-  const availableTags = extractUniqueValues([...documents, ...analyses], 'tags');
-  const availableAuthors = extractUniqueValues([...documents, ...analyses], 'author');
-  const availableUploaders = extractUniqueValues([...documents, ...analyses], 'uploader');
+  // const availableTags = extractUniqueValues([...documents, ...analyses], 'tags');
+  // const availableAuthors = extractUniqueValues([...documents, ...analyses], 'author');
+  // const availableUploaders = extractUniqueValues([...documents, ...analyses], 'uploader');
 
   // Perform search with filters
   const performSearch = () => {
@@ -295,6 +296,9 @@ const AdvancedSearch = ({
           case 'date':
             aValue = new Date(a.uploadDate || a.date || a.createdAt);
             bValue = new Date(b.uploadDate || b.date || b.createdAt);
+            break;
+          default:
+            // No secondary sorting
             break;
         }
         if (aValue > bValue) comparison = 1;

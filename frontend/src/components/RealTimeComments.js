@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
@@ -35,9 +35,9 @@ const RealTimeComments = ({
   // Load comments
   useEffect(() => {
     loadComments();
-  }, [documentId]);
+  }, [documentId, loadComments]);
 
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/comments/${documentId}`, {
@@ -61,7 +61,7 @@ const RealTimeComments = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [documentId]);
 
   // Add new comment
   const handleAddComment = async () => {

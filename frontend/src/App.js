@@ -67,7 +67,7 @@ ErrorBoundary.propTypes = {
 
 function OneDriveStatusIndicator() {
   const [status, setStatus] = useState('checking');
-  const [message, setMessage] = useState('Checking connection...');
+  const [, setMessage] = useState('Checking connection...');
 
   const checkStatus = async () => {
     try {
@@ -1998,7 +1998,7 @@ const SearchAndFilterBar = ({
 const AnalyticsDashboard = ({ documents, analyses, selectedLOB, projectTags, lobCategories }) => {
   // Calculate analytics
   const totalDocuments = documents.length;
-  const totalAnalyses = analyses.length;
+  // const totalAnalyses = analyses.length;
   const lobDistribution = lobCategories.reduce((acc, lob) => {
     if (lob.id === 'all') return acc;
     const count = documents.filter(doc => doc.lob === lob.id).length;

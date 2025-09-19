@@ -28,7 +28,7 @@ const OneDrivePicker = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('checking');
-  const [authUrl, setAuthUrl] = useState(null);
+  const [, setAuthUrl] = useState(null);
 
   useEffect(() => {
     if (isVisible) {
@@ -121,11 +121,12 @@ const OneDrivePicker = ({
     setCurrentPath([...currentPath, folder.id]);
   };
 
-  const handleBackClick = () => {
-    if (currentPath.length > 0) {
-      setCurrentPath(currentPath.slice(0, -1));
-    }
-  };
+  // Unused function - commented out to fix ESLint warning
+  // const handleBackClick = () => {
+  //   if (currentPath.length > 0) {
+  //     setCurrentPath(currentPath.slice(0, -1));
+  //   }
+  // };
 
   const handleFileSelect = (file) => {
     setSelectedFile(file);
