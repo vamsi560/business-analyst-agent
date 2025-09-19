@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  FileText, FileImage, FilePdf, FileWord, FileCode, 
+  FileText, FileImage, File, FileWord, FileCode, 
   Download, Eye, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut,
   RotateCw, RotateCcw, Maximize2, Minimize2, Search, Filter,
   Calendar, User, Tag, Clock, FileCheck, AlertCircle
@@ -32,7 +32,7 @@ const EnhancedDocumentViewer = ({
     const ext = filename.toLowerCase().split('.').pop();
     switch (ext) {
       case 'pdf':
-        return FilePdf;
+        return File;
       case 'doc':
       case 'docx':
         return FileWord;

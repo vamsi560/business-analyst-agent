@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  FileText, FileImage, FilePdf, FileWord, FileCode, 
+  FileText, FileImage, File, FileWord, FileCode, 
   Download, Eye, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut
 } from 'lucide-react';
 
@@ -13,7 +13,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
     const ext = filename.toLowerCase().split('.').pop();
     switch (ext) {
       case 'pdf':
-        return FilePdf;
+        return File;
       case 'doc':
       case 'docx':
         return FileWord;
