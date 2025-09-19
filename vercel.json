@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { 
+        "distDir": "frontend/build"
+      }
+    },
+    {
+      "src": "api/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    { "src": "^/api/(.*)$", "dest": "/api/app.py" },
+    { "src": "^/static/(.*)$", "dest": "/frontend/build/static/$1" },
+    { "src": "^/favicon.ico$", "dest": "/frontend/build/favicon.ico" },
+    { "src": "^/manifest.json$", "dest": "/frontend/build/manifest.json" },
+    { "src": "^/logo192.png$", "dest": "/frontend/build/logo512.png" },
+    { "src": "^/logo512.png$", "dest": "/frontend/build/logo512.png" },
+    { "src": "^/robots.txt$", "dest": "/frontend/build/robots.txt" },
+    { "src": "^(?!/api/).*", "dest": "/frontend/build/index.html" }
+  ],
+  "env": {
+    "PYTHONPATH": ".",
+    "QDRANT_ENABLED": "false",
+    "ENVIRONMENT": "production"
+  },
+  "functions": {
+    "api/app.py": {
+      "maxDuration": 30
+    }
+  }
+}

@@ -1,0 +1,116 @@
+# Environment Variables Template for Vercel Deployment
+# Copy these to your Vercel Dashboard → Settings → Environment Variables
+
+# =============================================================================
+# REQUIRED ENVIRONMENT VARIABLES
+# =============================================================================
+
+# Google Gemini AI API Key
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Database Configuration (PostgreSQL recommended for production)
+DATABASE_URL=postgresql://username:password@host:port/database_name
+
+# Azure Communication Services (for email notifications)
+ACS_CONNECTION_STRING=endpoint=https://your-acs-resource.communication.azure.com/;accesskey=your_access_key
+ACS_SENDER_ADDRESS=DoNotReply@your-verified-domain.azurecomm.net
+
+# Email Configuration
+APPROVAL_RECIPIENT_EMAIL=approver@example.com
+
+# =============================================================================
+# OPTIONAL ENVIRONMENT VARIABLES (Enhanced Features)
+# =============================================================================
+
+# OneDrive Integration
+ONEDRIVE_ENABLED=true
+ONEDRIVE_CLIENT_ID=your_azure_app_client_id
+ONEDRIVE_CLIENT_SECRET=your_azure_app_client_secret
+ONEDRIVE_TENANT_ID=your_azure_tenant_id
+
+# Azure DevOps Integration
+ADO_PERSONAL_ACCESS_TOKEN=your_azure_devops_pat
+ADO_ORGANIZATION_URL=https://dev.azure.com/your-organization
+ADO_PROJECT_NAME=your_project_name
+
+# LangChain Integration (Advanced AI features)
+LANGCHAIN_ENABLED=true
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4
+
+# Qdrant Vector Database (for enhanced search)
+QDRANT_ENABLED=true
+QDRANT_HOST=your_qdrant_host
+QDRANT_PORT=6333
+
+# Azure Storage (for file uploads)
+AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=your_account;AccountKey=your_key;EndpointSuffix=core.windows.net
+AZURE_STORAGE_CONTAINER_NAME=ba-agent-files
+
+# =============================================================================
+# VERCEL-SPECIFIC SETTINGS (Auto-configured)
+# =============================================================================
+
+# These are automatically set by Vercel
+VERCEL_ENVIRONMENT=production
+VERCEL_REGION=auto
+
+# Application Settings
+ENVIRONMENT=production
+DEBUG=false
+PYTHONPATH=.
+
+# =============================================================================
+# INSTRUCTIONS FOR SETTING UP IN VERCEL
+# =============================================================================
+
+# 1. Go to https://vercel.com/dashboard
+# 2. Select your BA Agent project
+# 3. Navigate to Settings → Environment Variables
+# 4. Add each variable above with your actual values
+# 5. Set Environment to "Production, Preview, and Development"
+# 6. Click "Save"
+# 7. Redeploy your application: vercel --prod
+
+# =============================================================================
+# GETTING API KEYS AND CREDENTIALS
+# =============================================================================
+
+# Gemini API Key:
+# - Visit: https://makersuite.google.com/app/apikey
+# - Create new API key
+# - Copy the key
+
+# Azure Communication Services:
+# - Create ACS resource in Azure Portal
+# - Go to Keys section
+# - Copy connection string and sender address
+
+# PostgreSQL Database:
+# - Vercel Postgres: https://vercel.com/docs/storage/vercel-postgres
+# - Or external provider: Supabase, PlanetScale, etc.
+
+# OneDrive Integration:
+# - Register app in Azure App Registrations
+# - Configure API permissions for Microsoft Graph
+# - Get client ID, secret, and tenant ID
+
+# Azure DevOps:
+# - Go to Azure DevOps → User Settings → Personal Access Tokens
+# - Create new token with appropriate permissions
+# - Copy the token
+
+# OpenAI API Key:
+# - Visit: https://platform.openai.com/api-keys
+# - Create new API key
+# - Copy the key
+
+# =============================================================================
+# SECURITY NOTES
+# =============================================================================
+
+# - Never commit these values to your repository
+# - Use different keys for development and production
+# - Rotate keys regularly
+# - Monitor usage and costs
+# - Enable only the features you need

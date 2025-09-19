@@ -1,0 +1,366 @@
+# BA Agent - Azure DevOps CI/CD Pipeline
+# Automated deployment pipeline for BA Agent system
+
+trigger:
+  branches:
+    include:
+    - main
+    - develop
+  paths:
+    include:
+    - frontend/*
+    - backend/*
+    - azure-deployment/*
+
+pr:
+  branches:
+    include:
+    - main
+
+variables:
+  # Project variables
+  projectName: 'ba-agent'
+  environment: $[lower(variables['Build.SourceBranchName'])]
+  
+  # Azure resources
+  resourceGroupName: 'rg-$(projectName)-$(environment)'
+  appServiceName: 'app-$(projectName)-api-$(environment)'
+  storageAccountName: 'st$(projectName)$(environment)'
+  keyVaultName: 'kv-$(projectName)-$(environment)'
+  
+  # Build variables
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
+  
+  # Docker variables
+  dockerImageName: 'ba-agent-api'
+  dockerTag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: 'Build and Test'
+  jobs:
+  - job: Build
+    displayName: 'Build Application'
+    pool:
+      vmImage: 'ubuntu-latest'
+    
+    steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.11'
+      inputs:
+        versionSpec: '3.11'
+    
+    - task: NodeTool@0
+      displayName: 'Use Node.js 18'
+      inputs:
+        versionSpec: '18.x'
+    
+    - script: |
+        echo "Installing Python dependencies..."
+        cd backend
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+      displayName: 'Install Python Dependencies'
+    
+    - script: |
+        echo "Installing Node.js dependencies..."
+        cd frontend
+        npm ci
+      displayName: 'Install Node.js Dependencies'
+    
+    - script: |
+        echo "Running Python tests..."
+        cd backend
+        python -m pytest tests/ -v --cov=. --cov-report=xml
+      displayName: 'Run Python Tests'
+      continueOnError: true
+    
+    - script: |
+        echo "Running frontend tests..."
+        cd frontend
+        npm test -- --coverage --watchAll=false
+      displayName: 'Run Frontend Tests'
+      continueOnError: true
+    
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/test-results.xml'
+        mergeTestResults: true
+        testRunTitle: 'BA Agent Tests'
+      condition: succeededOrFailed()
+    
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish Coverage Results'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '**/coverage.xml'
+        reportDirectory: '**/coverage'
+      condition: succeededOrFailed()
+
+- stage: Security
+  displayName: 'Security Scan'
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - job: SecurityScan
+    displayName: 'Security Analysis'
+    pool:
+      vmImage: 'ubuntu-latest'
+    
+    steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.11'
+      inputs:
+        versionSpec: '3.11'
+    
+    - script: |
+        echo "Installing security tools..."
+        pip install bandit safety
+      displayName: 'Install Security Tools'
+    
+    - script: |
+        echo "Running security scan..."
+        cd backend
+        bandit -r . -f json -o bandit-report.json || true
+        safety check --json --output safety-report.json || true
+      displayName: 'Run Security Scan'
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Security Reports'
+      inputs:
+        pathToPublish: 'backend'
+        artifactName: 'security-reports'
+        publishLocation: 'Container'
+
+- stage: DeployStaging
+  displayName: 'Deploy to Staging'
+  dependsOn: Security
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: DeployStaging
+    displayName: 'Deploy to Staging Environment'
+    environment: 'staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          
+          - task: AzureCLI@2
+            displayName: 'Deploy to Azure App Service'
+            inputs:
+              azureSubscription: 'Azure-Production'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "Deploying to staging environment..."
+                
+                # Get the app service name for staging
+                $stagingAppService = "app-$(projectName)-api-staging"
+                $resourceGroup = "rg-$(projectName)-staging"
+                
+                # Deploy backend
+                Write-Host "Deploying backend to $stagingAppService"
+                az webapp deployment source config-zip --resource-group $resourceGroup --name $stagingAppService --src backend.zip
+                
+                # Deploy frontend to Static Web Apps
+                Write-Host "Deploying frontend to Static Web Apps"
+                az staticwebapp create --name "ba-agent-frontend-staging" --resource-group $resourceGroup --source . --branch main --app-location "/frontend" --api-location "/backend"
+          
+          - task: AzureCLI@2
+            displayName: 'Run Integration Tests'
+            inputs:
+              azureSubscription: 'Azure-Production'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "Running integration tests..."
+                
+                $appUrl = "https://app-$(projectName)-api-staging.azurewebsites.net"
+                
+                # Test health endpoint
+                $response = Invoke-WebRequest -Uri "$appUrl/health" -UseBasicParsing
+                if ($response.StatusCode -eq 200) {
+                    Write-Host "Health check passed"
+                } else {
+                    throw "Health check failed"
+                }
+                
+                # Test API endpoints
+                $testData = @{
+                    file = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("Test document content"))
+                }
+                
+                $response = Invoke-RestMethod -Uri "$appUrl/api/generate" -Method POST -Body ($testData | ConvertTo-Json) -ContentType "application/json"
+                Write-Host "API test completed"
+
+- stage: DeployProduction
+  displayName: 'Deploy to Production'
+  dependsOn: DeployStaging
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: DeployProduction
+    displayName: 'Deploy to Production Environment'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          
+          - task: AzureCLI@2
+            displayName: 'Deploy to Azure App Service'
+            inputs:
+              azureSubscription: 'Azure-Production'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "Deploying to production environment..."
+                
+                # Get the app service name for production
+                $prodAppService = "app-$(projectName)-api-prod"
+                $resourceGroup = "rg-$(projectName)-prod"
+                
+                # Deploy backend
+                Write-Host "Deploying backend to $prodAppService"
+                az webapp deployment source config-zip --resource-group $resourceGroup --name $prodAppService --src backend.zip
+                
+                # Deploy frontend to Static Web Apps
+                Write-Host "Deploying frontend to Static Web Apps"
+                az staticwebapp create --name "ba-agent-frontend-prod" --resource-group $resourceGroup --source . --branch main --app-location "/frontend" --api-location "/backend"
+          
+          - task: AzureCLI@2
+            displayName: 'Configure Production Settings'
+            inputs:
+              azureSubscription: 'Azure-Production'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "Configuring production settings..."
+                
+                $resourceGroup = "rg-$(projectName)-prod"
+                $prodAppService = "app-$(projectName)-api-prod"
+                
+                # Configure production app settings
+                az webapp config appsettings set --resource-group $resourceGroup --name $prodAppService --settings `
+                    WEBSITES_PORT=5000 `
+                    PYTHON_VERSION=3.11 `
+                    SCM_DO_BUILD_DURING_DEPLOYMENT=true `
+                    ENVIRONMENT=production
+                
+                # Configure auto-scaling
+                az monitor autoscale create --resource-group $resourceGroup --name "autoscale-$(projectName)-prod" --resource "$prodAppService" --resource-type "Microsoft.Web/sites" --min-count 2 --max-count 10 --count 2
+                
+                # Configure scaling rules
+                az monitor autoscale rule create --resource-group $resourceGroup --autoscale-name "autoscale-$(projectName)-prod" --condition "Percentage CPU > 70 avg 5m" --scale out 1
+                az monitor autoscale rule create --resource-group $resourceGroup --autoscale-name "autoscale-$(projectName)-prod" --condition "Percentage CPU < 30 avg 5m" --scale in 1
+          
+          - task: AzureCLI@2
+            displayName: 'Run Production Tests'
+            inputs:
+              azureSubscription: 'Azure-Production'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "Running production tests..."
+                
+                $appUrl = "https://app-$(projectName)-api-prod.azurewebsites.net"
+                
+                # Test health endpoint
+                $response = Invoke-WebRequest -Uri "$appUrl/health" -UseBasicParsing
+                if ($response.StatusCode -eq 200) {
+                    Write-Host "Production health check passed"
+                } else {
+                    throw "Production health check failed"
+                }
+                
+                # Test performance
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $response = Invoke-WebRequest -Uri "$appUrl/health" -UseBasicParsing
+                $stopwatch.Stop()
+                
+                if ($stopwatch.ElapsedMilliseconds -lt 2000) {
+                    Write-Host "Performance test passed: $($stopwatch.ElapsedMilliseconds)ms"
+                } else {
+                    Write-Host "Performance test failed: $($stopwatch.ElapsedMilliseconds)ms"
+                }
+
+- stage: PostDeployment
+  displayName: 'Post-Deployment Tasks'
+  dependsOn: DeployProduction
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - job: PostDeployment
+    displayName: 'Post-Deployment Activities'
+    pool:
+      vmImage: 'ubuntu-latest'
+    
+    steps:
+    - task: AzureCLI@2
+      displayName: 'Send Deployment Notification'
+      inputs:
+        azureSubscription: 'Azure-Production'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          Write-Host "Sending deployment notification..."
+          
+          # Send notification to teams/slack
+          $webhookUrl = "$(TeamsWebhookUrl)"
+          $body = @{
+              text = "✅ BA Agent deployment completed successfully!`nEnvironment: Production`nBuild: $(Build.BuildId)`nCommit: $(Build.SourceVersion)"
+          } | ConvertTo-Json
+          
+          Invoke-RestMethod -Uri $webhookUrl -Method POST -Body $body -ContentType "application/json"
+    
+    - task: AzureCLI@2
+      displayName: 'Update Deployment Status'
+      inputs:
+        azureSubscription: 'Azure-Production'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          Write-Host "Updating deployment status..."
+          
+          # Update deployment status in Azure DevOps
+          $deploymentStatus = @{
+              environment = "production"
+              status = "succeeded"
+              deploymentId = "$(Release.ReleaseId)"
+              timestamp = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
+          }
+          
+          Write-Host "Deployment status updated"
+
+# Artifact publishing
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Backend Artifacts'
+  inputs:
+    pathToPublish: 'backend'
+    artifactName: 'backend'
+    publishLocation: 'Container'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Frontend Artifacts'
+  inputs:
+    pathToPublish: 'frontend/build'
+    artifactName: 'frontend'
+    publishLocation: 'Container'
+
+# Docker build (optional)
+- task: Docker@2
+  displayName: 'Build Docker Image'
+  inputs:
+    containerRegistry: 'Azure Container Registry'
+    repository: 'ba-agent-api'
+    command: 'buildAndPush'
+    Dockerfile: 'backend/Dockerfile'
+    tags: |
+      $(Build.BuildId)
+      latest
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main') 

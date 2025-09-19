@@ -1,0 +1,149 @@
+{
+  "version": 2,
+  "name": "ba-agent-unified",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { 
+        "distDir": "frontend/build"
+      }
+    },
+    {
+      "src": "api/app.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/api/health$",
+      "dest": "/api/app.py",
+      "methods": ["GET"]
+    },
+    {
+      "src": "^/api/vercel-health$",
+      "dest": "/api/app.py", 
+      "methods": ["GET"]
+    },
+    {
+      "src": "^/api/test$",
+      "dest": "/api/app.py",
+      "methods": ["GET"]
+    },
+    {
+      "src": "^/api/analyze$",
+      "dest": "/api/app.py",
+      "methods": ["POST", "OPTIONS"]
+    },
+    {
+      "src": "^/api/generate$",
+      "dest": "/api/app.py",
+      "methods": ["POST", "OPTIONS"]
+    },
+    {
+      "src": "^/api/upload$",
+      "dest": "/api/app.py",
+      "methods": ["POST", "OPTIONS"]
+    },
+    {
+      "src": "^/api/documents$",
+      "dest": "/api/app.py",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    },
+    {
+      "src": "^/api/documents/(.*)$",
+      "dest": "/api/app.py",
+      "methods": ["GET", "PUT", "DELETE", "OPTIONS"]
+    },
+    {
+      "src": "^/api/analytics$",
+      "dest": "/api/app.py",
+      "methods": ["GET", "OPTIONS"]
+    },
+    {
+      "src": "^/api/auth/(.*)$",
+      "dest": "/api/app.py",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    },
+    {
+      "src": "^/api/onedrive/(.*)$",
+      "dest": "/api/app.py",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    },
+    {
+      "src": "^/api/(.*)$",
+      "dest": "/api/app.py"
+    },
+    {
+      "src": "^/static/(.*)$",
+      "dest": "/frontend/build/static/$1"
+    },
+    {
+      "src": "^/favicon.ico$",
+      "dest": "/frontend/build/favicon.ico"
+    },
+    {
+      "src": "^/manifest.json$",
+      "dest": "/frontend/build/manifest.json"
+    },
+    {
+      "src": "^/logo192.png$",
+      "dest": "/frontend/build/logo192.png"
+    },
+    {
+      "src": "^/logo512.png$",
+      "dest": "/frontend/build/logo512.png"
+    },
+    {
+      "src": "^/robots.txt$",
+      "dest": "/frontend/build/robots.txt"
+    },
+    {
+      "src": "^(?!/api/).*",
+      "dest": "/frontend/build/index.html"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": ".",
+    "ENVIRONMENT": "production",
+    "VERCEL_ENVIRONMENT": "production"
+  },
+  "functions": {
+    "api/app.py": {
+      "maxDuration": 30,
+      "memory": 1024,
+      "runtime": "python3.9"
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, X-Requested-With"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/app.py"
+    }
+  ],
+  "installCommand": "cd frontend && npm install",
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/build"
+}
