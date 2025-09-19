@@ -3287,20 +3287,6 @@ function MainApp() {
               </div>
               <FormattedTextRenderer content={results.trd} title="Technical Requirements Document" />
               
-              {/* Smart Suggestions */}
-              <SmartSuggestions 
-                document={selectedDocument}
-                analysis={results}
-                onApplySuggestion={(suggestion) => {
-                  console.log('Applying suggestion:', suggestion);
-                  // Here you could implement logic to apply the suggestion to the document
-                }}
-                onDismissSuggestion={(suggestion) => {
-                  console.log('Dismissing suggestion:', suggestion);
-                }}
-                showSuggestions={true}
-                maxSuggestions={5}
-              />
 
               {/* Real-time Comments */}
               <RealTimeComments 
@@ -3324,33 +3310,6 @@ function MainApp() {
                 moderationEnabled={false}
               />
 
-              {/* Multi-language Support */}
-              <MultiLanguageSupport 
-                document={selectedDocument}
-                onLanguageChange={(languageCode) => {
-                  console.log('Language changed to:', languageCode);
-                }}
-                onTranslationRequest={(content, targetLanguage) => {
-                  console.log('Translation requested:', targetLanguage);
-                }}
-                supportedLanguages={[
-                  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
-                  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
-                  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-                  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
-                  { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
-                  { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
-                  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
-                  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
-                  { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-                  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
-                  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-                  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' }
-                ]}
-                showLanguageSelector={true}
-                enableTranslation={true}
-                enableAutoDetection={true}
-              />
             </div>
           )}
 
