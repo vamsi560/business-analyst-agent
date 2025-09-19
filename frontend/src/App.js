@@ -738,7 +738,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
               // Try to prefix nodes that are single letters (Mermaid sometimes treats them specially)
               const prefixed = cleanedCode.replace(/\n\s*([A-Z])\s*\[/g, (m, p1) => `\n ${p1}${p1} [`)
                                           .replace(/class\s+([A-Z])(\s|;)/g, (m, p1, p2) => `class ${p1}${p1}${p2}`)
-                                          .replace(/\b([A-Z])\b(?![\w\[])/g, '$1');
+                                          .replace(/\b([A-Z])\b(?![\w[])/g, '$1');
               ({ svg } = await window.mermaid.render(uniqueId, prefixed));
             }
             

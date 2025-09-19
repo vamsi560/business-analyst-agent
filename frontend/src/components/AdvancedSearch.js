@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
@@ -104,21 +104,21 @@ const AdvancedSearch = ({
     ]
   };
 
-  // Extract unique values from data
-  const extractUniqueValues = (items, field) => {
-    const values = new Set();
-    items.forEach(item => {
-      const value = item[field];
-      if (value) {
-        if (Array.isArray(value)) {
-          value.forEach(v => values.add(v));
-        } else {
-          values.add(value);
-        }
-      }
-    });
-    return Array.from(values).sort();
-  };
+  // Extract unique values from data (commented out as unused)
+  // const extractUniqueValues = (items, field) => {
+  //   const values = new Set();
+  //   items.forEach(item => {
+  //     const value = item[field];
+  //     if (value) {
+  //       if (Array.isArray(value)) {
+  //         value.forEach(v => values.add(v));
+  //       } else {
+  //         values.add(value);
+  //       }
+  //     }
+  //   });
+  //   return Array.from(values).sort();
+  // };
 
   // const availableTags = extractUniqueValues([...documents, ...analyses], 'tags');
   // const availableAuthors = extractUniqueValues([...documents, ...analyses], 'author');
