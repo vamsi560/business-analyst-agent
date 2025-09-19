@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Simple icon replacements without lucide-react
 const SimpleIcons = {
@@ -39,12 +40,8 @@ const EnhancedDocumentViewer = ({
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [previewScale, setPreviewScale] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState('date');
-  const [sortOrder, setSortOrder] = useState('desc');
 
   // Enhanced file type detection
   const getFileIcon = (filename) => {
@@ -191,10 +188,11 @@ const EnhancedDocumentViewer = ({
             const colorClasses = getFileTypeColor(document.filename || document.name);
             
             return (
-              <div
-                key={index}
-                className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md hover:scale-105 ${colorClasses}`}
+              <button
+                key={document.id || document.name || index}
+                className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md hover:scale-105 ${colorClasses} text-left w-full`}
                 onClick={() => handleDocumentClick(document)}
+                aria-label={`Open document ${document.name || document.filename}`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
@@ -231,7 +229,7 @@ const EnhancedDocumentViewer = ({
                     </button>
                   </div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -276,6 +274,15 @@ const EnhancedDocumentViewer = ({
       )}
     </div>
   );
+};
+
+EnhancedDocumentViewer.propTypes = {
+  documents: PropTypes.array,
+  onDownload: PropTypes.func,
+  title: PropTypes.string,
+  showThumbnails: PropTypes.bool,
+  enableFullscreen: PropTypes.bool,
+  enableAnnotations: PropTypes.bool
 };
 
 export default EnhancedDocumentViewer;

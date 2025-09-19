@@ -3,9 +3,9 @@ import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
 const { 
-  MessageSquare, Send, MoreVertical, Edit3, Trash2, 
-  Reply, ThumbsUp, ThumbsDown, Flag, User, Clock,
-  CheckCircle, AlertCircle, Eye, EyeOff, Lock, Unlock
+  MessageSquare, Send, Edit3, Trash2, 
+  Reply, ThumbsUp, ThumbsDown, User, Clock,
+  CheckCircle, AlertCircle, Eye, EyeOff
 } = GlobalIcons;
 
 const RealTimeComments = ({ 

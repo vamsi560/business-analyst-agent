@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
@@ -15,7 +16,6 @@ const ResponsiveLayout = ({
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [headerHeight, setHeaderHeight] = useState(0);
 
   // Detect screen size
   useEffect(() => {
@@ -113,7 +113,15 @@ const ResponsiveLayout = ({
             {isMobile && sidebarOpen && (
               <div 
                 className="fixed inset-0 bg-black bg-opacity-50 z-50"
+                role="button"
+                tabIndex={0}
                 onClick={() => setSidebarOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setSidebarOpen(false);
+                  }
+                }}
+                aria-label="Close sidebar"
               />
             )}
 
@@ -408,6 +416,15 @@ export const ResponsiveTable = ({
       </table>
     </div>
   );
+};
+
+ResponsiveLayout.propTypes = {
+  children: PropTypes.node,
+  sidebar: PropTypes.node,
+  header: PropTypes.node,
+  showSidebar: PropTypes.bool,
+  showHeader: PropTypes.bool,
+  className: PropTypes.string
 };
 
 export default ResponsiveLayout;

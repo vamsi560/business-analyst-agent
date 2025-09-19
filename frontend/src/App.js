@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import JSZip from 'jszip';
@@ -58,25 +59,26 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+ErrorBoundary.propTypes = {
+  children: PropTypes.node
+};
+
 // --- Enhanced Helper Components ---
 
 function OneDriveStatusIndicator() {
   const [status, setStatus] = useState('checking');
-  const [message, setMessage] = useState('');
 
   const checkStatus = async () => {
     try {
       const response = await fetch('/api/integrations/onedrive/status');
       if (response.status === 401) {
         setStatus('not_authenticated');
-        setMessage('Please log in to check OneDrive status');
         return;
       }
       
       const data = await response.json();
       if (data.configured === false) {
         setStatus('not_configured');
-        setMessage('OneDrive not configured');
       } else if (data.user_connected) {
         setStatus('connected');
         setMessage('Connected to OneDrive');
@@ -140,16 +142,21 @@ function OneDriveStatusIndicator() {
     }
   };
 
+  const getStatusColor = () => {
+    switch (status) {
+      case 'connected': return 'text-green-600';
+      case 'not_connected': return 'text-orange-600';
+      case 'not_configured': return 'text-red-600';
+      case 'not_authenticated': return 'text-yellow-600';
+      case 'error': return 'text-yellow-600';
+      default: return 'text-blue-600';
+    }
+  };
+
   return (
     <div className="flex items-center gap-1 text-xs">
       {getStatusIcon()}
-      <span className={`font-medium ${
-        status === 'connected' ? 'text-green-600' : 
-        status === 'not_connected' ? 'text-orange-600' : 
-        status === 'not_configured' ? 'text-red-600' : 
-        status === 'not_authenticated' ? 'text-yellow-600' : 
-        status === 'error' ? 'text-yellow-600' : 'text-blue-600'
-      }`}>
+      <span className={`font-medium ${getStatusColor()}`}>
         {getStatusText()}
       </span>
     </div>
@@ -191,6 +198,12 @@ function MarkdownRenderer({ markdown, title, className = "" }) {
     </div>
   );
 }
+
+MarkdownRenderer.propTypes = {
+  markdown: PropTypes.string,
+  title: PropTypes.string,
+  className: PropTypes.string
+};
 
 function FormattedTextRenderer(props) {
   const { content, title, className = "" } = props;
@@ -392,7 +405,7 @@ function FormattedTextRenderer(props) {
           {formattedLines.map((line, index) => {
             if (line.type === 'header') {
               return (
-                <div key={index} className={`relative ${line.className}`}>
+                <div key={`header-${line.level}-${line.content.substring(0, 20)}-${index}`} className={`relative ${line.className}`}>
                   {line.level <= 2 && (
                     <div className="absolute -left-6 top-0 w-1 h-full bg-gradient-to-b from-gray-600 to-gray-700 rounded-full"></div>
                   )}
@@ -405,14 +418,14 @@ function FormattedTextRenderer(props) {
               );
             } else if (line.type === 'bullet') {
               return (
-                <div key={index} className={`flex items-start ${line.className}`}>
+                <div key={`bullet-${line.content.substring(0, 20)}-${index}`} className={`flex items-start ${line.className}`}>
                   <div className="w-3 h-3 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full mt-2 mr-4 flex-shrink-0 shadow-sm"></div>
                   <span className="flex-1 leading-relaxed">{line.content}</span>
                 </div>
               );
             } else if (line.type === 'numbered') {
               return (
-                <div key={index} className={`${line.className} pl-6 relative`}>
+                <div key={`sub-bullet-${line.content.substring(0, 20)}-${index}`} className={`${line.className} pl-6 relative`}>
                   <div className="absolute left-0 top-0 w-6 h-6 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center text-white text-xs font-bold">
                     {line.content.match(/^\d+/) ? line.content.match(/^\d+/)[0] : '•'}
                   </div>
@@ -420,10 +433,10 @@ function FormattedTextRenderer(props) {
                 </div>
               );
             } else if (line.type === 'spacing') {
-              return <div key={index} className={line.className}></div>;
+              return <div key={`spacing-${index}`} className={line.className}></div>;
             } else {
               return (
-                <div key={index} className={`${line.className} p-4 bg-gray-50 rounded-lg border-l-4 border-gray-300 my-3`}>
+                <div key={`quote-${line.content.substring(0, 20)}-${index}`} className={`${line.className} p-4 bg-gray-50 rounded-lg border-l-4 border-gray-300 my-3`}>
                   <div className="text-gray-800 leading-relaxed">{line.content}</div>
                 </div>
               );
@@ -448,6 +461,12 @@ function FormattedTextRenderer(props) {
     </div>
   );
 }
+
+FormattedTextRenderer.propTypes = {
+  content: PropTypes.string,
+  title: PropTypes.string,
+  className: PropTypes.string
+};
 
 // Enhanced Mermaid Diagram with better error handling and loading states
 function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
@@ -549,7 +568,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
     
     // Step 6: Normalize node definitions with special characters
     // 6a) Convert parentheses-shaped nodes to square-bracket nodes for stability: B(API Gateway) -> B[API Gateway]
-    cleaned = cleaned.replace(/\b([A-Za-z][\w]*)\s*\(([^)]+)\)/g, (m, id, label) => `${id}[${label}]`);
+    cleaned = cleaned.replace(/\b([A-Za-z]\w*)\s*\(([^)]+)\)/g, (m, id, label) => `${id}[${label}]`);
     // 6b) If label inside [] contains parentheses, keep the text but drop only the parentheses characters, not the content
     cleaned = cleaned.replace(/([A-Za-z])\[([^\]]*?\([^)]*\)[^\]]*?)\]/g, (match, nodeId, content) => {
       const cleanedContent = content.replace(/[()]/g, '').trim();
@@ -558,7 +577,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
     
     // Step 7: Fix edge definitions
     // Remove quoted or piped edge labels which can trigger unsupported arrow types in some mermaid builds
-    cleaned = cleaned.replace(/--\s*"[^\"]*"\s*-->/g, ' --> ');
+    cleaned = cleaned.replace(/--\s*"[^"]*"\s*-->/g, ' --> ');
     cleaned = cleaned.replace(/--\s*\|[^|]*\|\s*-->/g, ' --> ');
     // Normalize spacing
     cleaned = cleaned.replace(/([A-Z])\s*-->\s*([A-Z])/g, '$1 --> $2');
@@ -598,7 +617,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
           updated = updated.replace(reNode, ($0, p1, p2) => `${p1}${p2}${newId}`);
         });
         // class assignments
-        updated = updated.replace(/class\s+([A-Za-z0-9_,\s]+)\s+([A-Za-z_][\w]*)\s*;/g, (full, ids, cls) => {
+        updated = updated.replace(/class\s+([A-Za-z0-9_,\s]+)\s+([A-Za-z_]\w*)\s*;/g, (full, ids, cls) => {
           const mapped = ids.split(',').map(s => {
             const v = s.trim();
             return idMap.get(v) || v;
@@ -900,7 +919,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
     return () => {
       if (pngUrl) window.URL.revokeObjectURL(pngUrl);
     };
-  }, [showPngInline, code]);
+  }, [showPngInline, code, fetchPng, pngUrl]);
 
   if (error && fallbackMode) {
     return (
@@ -1069,10 +1088,16 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
   );
 }
 
+MermaidDiagram.propTypes = {
+  code: PropTypes.string,
+  id: PropTypes.string,
+  showDownloadPng: PropTypes.bool,
+  showPngInline: PropTypes.bool,
+  title: PropTypes.string
+};
+
 // Enhanced Backlog Stats with better visualization
 function BacklogStats({ backlog }) {
-  const [expanded, setExpanded] = useState({});
-
   const countItems = (items) => {
     let epics = 0, features = 0, stories = 0;
     items.forEach(item => {
@@ -1123,6 +1148,10 @@ function BacklogStats({ backlog }) {
     </div>
   );
 }
+
+BacklogStats.propTypes = {
+  backlog: PropTypes.array
+};
 
 function BacklogBoard({ backlog }) {
   if (!Array.isArray(backlog) || backlog.length === 0) {
@@ -1209,6 +1238,10 @@ function BacklogBoard({ backlog }) {
   );
 }
 
+BacklogBoard.propTypes = {
+  backlog: PropTypes.array
+};
+
 // Enhanced Progress Tracking Component
 function ProgressTracker({ currentStep, totalSteps, stepNames }) {
   return (
@@ -1231,7 +1264,7 @@ function ProgressTracker({ currentStep, totalSteps, stepNames }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
           {stepNames.map((step, index) => (
             <div 
-              key={index}
+              key={`step-${step}-${index}`}
               className={`p-2 rounded text-xs font-medium ${
                 index < currentStep 
                   ? 'bg-green-100 text-green-800 border border-green-200' 
@@ -1248,6 +1281,12 @@ function ProgressTracker({ currentStep, totalSteps, stepNames }) {
     </div>
   );
 }
+
+ProgressTracker.propTypes = {
+  currentStep: PropTypes.number,
+  totalSteps: PropTypes.number,
+  stepNames: PropTypes.array
+};
 
 // Enhanced Real-time Collaboration Component
 function CollaborationPanel({ notifications, messages }) {
@@ -1270,7 +1309,7 @@ function CollaborationPanel({ notifications, messages }) {
           <div className="p-4 max-h-64 overflow-y-auto">
             {notifications?.length > 0 ? (
               notifications.map((notification, index) => (
-                <div key={index} className="mb-3 p-2 bg-blue-50 rounded border border-blue-200">
+                <div key={`notification-${notification.substring(0, 20)}-${index}`} className="mb-3 p-2 bg-blue-50 rounded border border-blue-200">
                   <p className="text-sm text-blue-800">{notification}</p>
                 </div>
               ))
@@ -1283,6 +1322,11 @@ function CollaborationPanel({ notifications, messages }) {
     </div>
   );
 }
+
+CollaborationPanel.propTypes = {
+  notifications: PropTypes.array,
+  messages: PropTypes.array
+};
 
 function BacklogCards({ backlog }) {
   const [expanded, setExpanded] = useState({});
@@ -1791,6 +1835,7 @@ const QuickStats = ({ documents, analyses, selectedLOB, projectTags, lobCategori
 };
 
 // Enhanced Search and Filter Component
+// eslint-disable-next-line no-unused-vars
 const SearchAndFilterBar = ({ 
   searchQuery, setSearchQuery, 
   sortBy, setSortBy, 
@@ -1948,6 +1993,7 @@ const SearchAndFilterBar = ({
 };
 
 // Enhanced Analytics Dashboard Component
+// eslint-disable-next-line no-unused-vars
 const AnalyticsDashboard = ({ documents, analyses, selectedLOB, projectTags, lobCategories }) => {
   // Calculate analytics
   const totalDocuments = documents.length;
@@ -2081,6 +2127,7 @@ const Capabilities = () => (
     </div>
   );
 
+// eslint-disable-next-line no-unused-vars
 const DocumentsSection = ({ documents, selectedDocument, setSelectedDocument, setDocuments, setNotification, selectedLOB, projectTags, lobCategories }) => {
   const [uploading, setUploading] = useState(false);
 
@@ -2326,6 +2373,10 @@ const PastAnalysesSection = ({ pastAnalyses, selectedAnalysis, setSelectedAnalys
   );
 };
 
+BacklogCards.propTypes = {
+  backlog: PropTypes.array
+};
+
 function MainApp() {
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -2382,16 +2433,24 @@ function MainApp() {
   const [filteredAnalyses, setFilteredAnalyses] = useState([]);
 
   // Enhanced Search and Filtering State
+  // eslint-disable-next-line no-unused-vars
   const [searchQuery, setSearchQuery] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [sortBy, setSortBy] = useState('date'); // date, name, lob, tags
+  // eslint-disable-next-line no-unused-vars
   const [sortOrder, setSortOrder] = useState('desc'); // asc, desc
+  // eslint-disable-next-line no-unused-vars
   const [viewMode, setViewMode] = useState('grid'); // grid, list, compact
+  // eslint-disable-next-line no-unused-vars
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [dateRange, setDateRange] = useState({ start: null, end: null });
+  // eslint-disable-next-line no-unused-vars
   const [statusFilter, setStatusFilter] = useState('all'); // all, completed, in-progress, pending
 
   // OneDrive Integration State
   const [showOneDrivePicker, setShowOneDrivePicker] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [onedriveFiles, setOnedriveFiles] = useState([]);
   const [onedriveLoading, setOnedriveLoading] = useState(false);
   const [showUploadContainer, setShowUploadContainer] = useState(true);
@@ -2617,6 +2676,7 @@ function MainApp() {
   ];
 
   // Safe event listener cleanup
+  // eslint-disable-next-line no-unused-vars
   const cleanupEventListeners = (listeners) => {
     listeners.forEach(({ event, handler }) => {
       try {

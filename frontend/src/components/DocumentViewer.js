@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Simple text-based icons to replace lucide-react
 const SimpleIcons = {
@@ -204,10 +205,11 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
             const colorClasses = getFileTypeColor(document.filename || document.name);
             
             return (
-              <div
-                key={index}
-                className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md hover:scale-105 ${colorClasses}`}
+              <button
+                key={document.id || document.name || index}
+                className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md hover:scale-105 ${colorClasses} text-left w-full`}
                 onClick={() => handleDocumentClick(document)}
+                aria-label={`Open document ${document.name || document.filename}`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
@@ -250,7 +252,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
                     </button>
                   </div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -263,7 +265,15 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
             {/* Background overlay */}
             <div 
               className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+              role="button"
+              tabIndex={0}
               onClick={closePreview}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  closePreview();
+                }
+              }}
+              aria-label="Close preview"
             ></div>
 
             {/* Modal content */}
@@ -344,6 +354,12 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
       )}
     </>
   );
+};
+
+DocumentViewer.propTypes = {
+  documents: PropTypes.array,
+  onDownload: PropTypes.func,
+  title: PropTypes.string
 };
 
 export default DocumentViewer;

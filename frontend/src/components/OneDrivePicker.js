@@ -27,13 +27,12 @@ const OneDrivePicker = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('checking');
-  const [authUrl, setAuthUrl] = useState(null);
 
   useEffect(() => {
     if (isVisible) {
       loadOneDriveContent();
     }
-  }, [isVisible, currentPath]);
+  }, [isVisible, currentPath, loadOneDriveContent]);
 
   const loadOneDriveContent = async () => {
     setLoading(true);

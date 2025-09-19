@@ -3,9 +3,9 @@ import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
 const { 
-  Search, Filter, X, Calendar, Tag, User, FileText, 
-  ChevronDown, ChevronUp, SortAsc, SortDesc, Clock,
-  CheckCircle, AlertCircle, Eye, EyeOff
+  Search, Filter, X, FileText, 
+  ChevronDown, ChevronUp, SortAsc, SortDesc,
+  CheckCircle
 } = GlobalIcons;
 
 const AdvancedSearch = ({ 

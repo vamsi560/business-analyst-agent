@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import GlobalIcons from './utils/GlobalIcons';
 
 // Extract icons for use in component
@@ -109,7 +110,7 @@ const LoginPage = ({ onLogin }) => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Username Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                     Username
                   </label>
                   <div className="relative">
@@ -117,6 +118,7 @@ const LoginPage = ({ onLogin }) => {
                       <User className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
+                      id="username"
                       type="text"
                       name="username"
                       value={credentials.username}
@@ -130,7 +132,7 @@ const LoginPage = ({ onLogin }) => {
 
                 {/* Password Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                     Password
                   </label>
                   <div className="relative">
@@ -138,6 +140,7 @@ const LoginPage = ({ onLogin }) => {
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
+                      id="password"
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={credentials.password}
@@ -235,6 +238,10 @@ const LoginPage = ({ onLogin }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 -z-10"></div>
     </div>
   );
+};
+
+LoginPage.propTypes = {
+  onLogin: PropTypes.func.isRequired
 };
 
 export default LoginPage;
