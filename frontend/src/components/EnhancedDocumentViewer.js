@@ -42,6 +42,8 @@ const EnhancedDocumentViewer = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [previewScale, setPreviewScale] = useState(1);
+  const [rotation, setRotation] = useState(0);
 
   // Enhanced file type detection
   const getFileIcon = (filename) => {

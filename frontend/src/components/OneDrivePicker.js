@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
@@ -27,6 +28,7 @@ const OneDrivePicker = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('checking');
+  const [authUrl, setAuthUrl] = useState(null);
 
   useEffect(() => {
     if (isVisible) {
@@ -419,6 +421,13 @@ const OneDrivePicker = ({
       </div>
     </div>
   );
+};
+
+OneDrivePicker.propTypes = {
+  onFileSelect: PropTypes.func,
+  onClose: PropTypes.func,
+  isVisible: PropTypes.bool,
+  title: PropTypes.string
 };
 
 export default OneDrivePicker;

@@ -67,6 +67,7 @@ ErrorBoundary.propTypes = {
 
 function OneDriveStatusIndicator() {
   const [status, setStatus] = useState('checking');
+  const [message, setMessage] = useState('Checking connection...');
 
   const checkStatus = async () => {
     try {
