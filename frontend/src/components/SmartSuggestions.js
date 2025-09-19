@@ -3,10 +3,8 @@ import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
 const { 
-  Lightbulb, CheckCircle, XCircle, AlertTriangle, 
-  FileText, Target, Users, Clock, TrendingUp,
-  ChevronDown, ChevronUp, RefreshCw, Star,
-  MessageSquare, ThumbsUp, ThumbsDown, BookOpen
+  ChevronDown, ChevronUp, RefreshCw,
+  ThumbsUp, ThumbsDown
 } = GlobalIcons;
 
 const SmartSuggestions = ({ 

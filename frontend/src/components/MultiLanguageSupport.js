@@ -3,9 +3,7 @@ import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
 const { 
-  Globe, Languages, CheckCircle, AlertCircle, 
-  Download, Upload, FileText, Settings, 
-  ChevronDown, ChevronUp, Eye, EyeOff
+  Globe, CheckCircle, Download
 } = GlobalIcons;
 
 const MultiLanguageSupport = ({ 

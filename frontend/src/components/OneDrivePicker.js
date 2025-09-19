@@ -6,11 +6,9 @@ const {
   Cloud, 
   Folder, 
   FileText, 
-  Download, 
   RefreshCw, 
   X,
   ChevronRight,
-  ChevronDown,
   Home,
   Search
 } = GlobalIcons;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import GlobalIcons from './utils/GlobalIcons';
 
 // Extract icons for use in component
-const { Eye, EyeOff, Lock, User, Shield } = GlobalIcons;
+const { Eye, EyeOff, Lock, User } = GlobalIcons;
 
 const LoginPage = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({

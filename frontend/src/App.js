@@ -1,15 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import JSZip from 'jszip';
 import LoginPage from './LoginPage';
-import ReactFlowDiagram from './components/ReactFlowDiagram';
-import { generateSystemArchitectureDiagram, generateDatabaseDiagram, generateUserFlowDiagram } from './utils/diagramGenerator';
 import OneDrivePicker from './components/OneDrivePicker';
 import EnhancedDocumentViewer from './components/EnhancedDocumentViewer';
 import AdvancedSearch from './components/AdvancedSearch';
-import ResponsiveLayout, { ResponsiveGrid, ResponsiveCard, ResponsiveButton, ResponsiveModal } from './components/ResponsiveLayout';
 import SmartSuggestions from './components/SmartSuggestions';
 import RealTimeComments from './components/RealTimeComments';
 import MultiLanguageSupport from './components/MultiLanguageSupport';
@@ -19,8 +15,8 @@ import GlobalIcons from './utils/GlobalIcons';
 const {
     UploadCloud, FileText, ListCollapse, Folder, Clock, Settings, CheckCircle, XCircle, 
     ChevronDown, ChevronUp, ChevronRight, Search, Copy, AlertTriangle,
-    TrendingUp, Users, Activity, BarChart3, Target, Zap, Eye, Download,
-    Bell, User, Calendar, PieChart, ArrowRight, ArrowLeft, Menu, Plus, Link, LogOut, Cloud, X
+    Users, Activity, BarChart3, Target, Zap, Eye, Download,
+    Bell, User, Plus, Link, LogOut, Cloud, X
 } = GlobalIcons;
 const SendIcon = GlobalIcons.SendIcon;
 
