@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "ba-agent-unified",
+  "name": "ba-agent-unified-v2",
   "builds": [
     {
       "src": "frontend/package.json",
@@ -13,7 +13,8 @@
       "src": "api/app.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.9"
       }
     }
   ],
@@ -110,13 +111,6 @@
     "PYTHONPATH": ".",
     "ENVIRONMENT": "production",
     "VERCEL_ENVIRONMENT": "production"
-  },
-  "functions": {
-    "api/app.py": {
-      "maxDuration": 30,
-      "memory": 1024,
-      "runtime": "python3.9"
-    }
   },
   "headers": [
     {
