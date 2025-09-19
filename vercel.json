@@ -1,18 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": { 
-        "distDir": "frontend/build"
-      }
-    },
-    {
-      "src": "api/app.py",
-      "use": "@vercel/python"
-    }
-  ],
   "routes": [
     { "src": "^/api/(.*)$", "dest": "/api/app.py" },
     { "src": "^/static/(.*)$", "dest": "/frontend/build/static/$1" },
@@ -32,5 +19,8 @@
     "api/app.py": {
       "maxDuration": 30
     }
-  }
+  },
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/build",
+  "installCommand": "cd frontend && npm install"
 }
