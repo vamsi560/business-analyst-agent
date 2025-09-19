@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, User, Shield } from 'lucide-react';
+import GlobalIcons from './utils/GlobalIcons';
 
 const LoginPage = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({
@@ -184,7 +184,7 @@ const LoginPage = ({ onLogin }) => {
               {/* Default Credentials Info */}
               <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
                 <h4 className="text-sm font-semibold text-blue-800 mb-3 flex items-center">
-                  <Shield className="w-4 h-4 mr-2" />
+                  <GlobalIcons.Shield />
                   Demo Credentials
                 </h4>
                 <div className="text-sm text-blue-700 space-y-2">

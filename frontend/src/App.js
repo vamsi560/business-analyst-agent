@@ -1,11 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { 
+import GlobalIcons from './utils/GlobalIcons';
+
+// Create local references to icons for backward compatibility
+const {
     UploadCloud, FileText, ListCollapse, Folder, Clock, Settings, CheckCircle, XCircle, 
-    ChevronDown, ChevronUp, ChevronRight, Search, Send as SendIcon, Copy, AlertTriangle,
+    ChevronDown, ChevronUp, ChevronRight, Search, Copy, AlertTriangle,
     TrendingUp, Users, Activity, BarChart3, Target, Zap, Eye, Download,
     Bell, User, Calendar, PieChart, ArrowRight, ArrowLeft, Menu, Plus, Link, LogOut, Cloud, X
-} from 'lucide-react';
+} = GlobalIcons;
+const SendIcon = GlobalIcons.SendIcon;
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import JSZip from 'jszip';

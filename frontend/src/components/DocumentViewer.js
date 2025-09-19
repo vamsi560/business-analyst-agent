@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
-import { 
-  FileText, FileImage, File, FileWord, FileCode, 
-  Download, Eye, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut
-} from 'lucide-react';
+
+// Simple text-based icons to replace lucide-react
+const SimpleIcons = {
+  FileText: () => <span>📄</span>,
+  FileImage: () => <span>🖼️</span>,
+  File: () => <span>📄</span>,
+  FileWord: () => <span>📝</span>,
+  FileCode: () => <span>💻</span>,
+  Download: () => <span>⬇️</span>,
+  Eye: () => <span>👁️</span>,
+  X: () => <span>✕</span>,
+  ChevronLeft: () => <span>‹</span>,
+  ChevronRight: () => <span>›</span>,
+  ZoomIn: () => <span>🔍+</span>,
+  ZoomOut: () => <span>🔍-</span>
+};
 
 const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Documents" }) => {
   const [selectedDocument, setSelectedDocument] = useState(null);
@@ -13,27 +25,27 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
     const ext = filename.toLowerCase().split('.').pop();
     switch (ext) {
       case 'pdf':
-        return File;
+        return SimpleIcons.File;
       case 'doc':
       case 'docx':
-        return FileWord;
+        return SimpleIcons.FileWord;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'gif':
       case 'bmp':
-        return FileImage;
+        return SimpleIcons.FileImage;
       case 'txt':
       case 'md':
-        return FileText;
+        return SimpleIcons.FileText;
       case 'json':
       case 'xml':
       case 'html':
       case 'css':
       case 'js':
-        return FileCode;
+        return SimpleIcons.FileCode;
       default:
-        return FileText;
+        return SimpleIcons.FileText;
     }
   };
 
@@ -146,7 +158,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
                 onClick={() => handleDownload(document)}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <Download className="w-4 h-4 inline mr-2" />
+                <SimpleIcons.Download />
                 Download Document
               </button>
             </div>
@@ -199,7 +211,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
-                    <Icon className="w-8 h-8 flex-shrink-0" />
+                    <Icon />
                     <div className="min-w-0 flex-1">
                       <h4 className="font-medium text-gray-900 truncate">
                         {document.filename || document.name}
@@ -224,7 +236,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
                       className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                       title="Download"
                     >
-                      <Download className="w-4 h-4" />
+                      <SimpleIcons.Download />
                     </button>
                     <button
                       onClick={(e) => {
@@ -234,7 +246,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
                       className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                       title="Preview"
                     >
-                      <Eye className="w-4 h-4" />
+                      <SimpleIcons.Eye />
                     </button>
                   </div>
                 </div>
@@ -293,7 +305,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
                       onClick={() => handleDownload(selectedDocument)}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                     >
-                      <Download className="w-4 h-4" />
+                      <SimpleIcons.Download />
                       Download
                     </button>
                     
@@ -302,7 +314,7 @@ const DocumentViewer = ({ documents = [], onDownload, title = "Uploaded Document
                       onClick={closePreview}
                       className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
-                      <X className="w-6 h-6" />
+                      <SimpleIcons.X />
                     </button>
                   </div>
                 </div>
