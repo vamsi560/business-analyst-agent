@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# Database Configuration
-DATABASE_URL = 'postgresql+psycopg2://bauser:Valuemomentum123@baagent.postgres.database.azure.com:5432/ba_agent'
+# Database Configuration - Use SQLite for Vercel compatibility
+# For production with PostgreSQL, use environment variable: DATABASE_URL
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///ba_agent.db')
 
 # Qdrant Vector Database Configuration
 QDRANT_ENABLED = True

@@ -885,7 +885,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
   };
 
   // Fetch PNG for inline display; detect Lucid handoff token and skip PNG
-  const fetchPng = async () => {
+  const fetchPng = useCallback(async () => {
     setLoadingPng(true);
     setPngUrl(null);
     try {
@@ -911,7 +911,7 @@ function MermaidDiagram({ code, id, showDownloadPng, showPngInline, title }) {
       setPngUrl(null);
     }
     setLoadingPng(false);
-  };
+  }, [code]);
 
   useEffect(() => {
     if (showPngInline && code) {
