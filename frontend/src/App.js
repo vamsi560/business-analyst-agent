@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
