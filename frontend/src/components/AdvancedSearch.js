@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { 
   Search, Filter, X, Calendar, Tag, User, FileText, 
   ChevronDown, ChevronUp, SortAsc, SortDesc, Clock,
   CheckCircle, AlertCircle, Eye, EyeOff
-} from 'lucide-react';
+} = GlobalIcons;
 
 const AdvancedSearch = ({ 
   documents = [], 

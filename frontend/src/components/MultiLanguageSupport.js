@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { 
   Globe, Languages, CheckCircle, AlertCircle, 
   Download, Upload, FileText, Settings, 
   ChevronDown, ChevronUp, Eye, EyeOff
-} from 'lucide-react';
+} = GlobalIcons;
 
 const MultiLanguageSupport = ({ 
   document,

@@ -13,7 +13,10 @@ import ReactFlow, {
   getTransformForBounds,
 } from 'reactflow';
 import { toPng } from 'html-to-image';
-import { Download, ZoomIn, ZoomOut, RotateCcw, Maximize2 } from 'lucide-react';
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { Download, ZoomIn, ZoomOut, RotateCcw, Maximize2 } = GlobalIcons;
 
 import 'reactflow/dist/style.css';
 

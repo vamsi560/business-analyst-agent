@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronLeft, ChevronRight, Search, Bell, User } from 'lucide-react';
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { Menu, X, ChevronLeft, ChevronRight, Search, Bell, User } = GlobalIcons;
 
 const ResponsiveLayout = ({ 
   children, 

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { 
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { 
   FileText, ChevronDown, ChevronRight, Hash, CheckCircle, 
   AlertTriangle, Info, Target, Users, Zap, Shield, Database,
   ArrowRight, Copy, Download, Eye
-} from 'lucide-react';
+} = GlobalIcons;
 
 const ProfessionalTRDFormatter = ({ content, title = "Technical Requirements Document" }) => {
   const [expandedSections, setExpandedSections] = useState({});

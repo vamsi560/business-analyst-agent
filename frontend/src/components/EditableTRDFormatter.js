@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { 
   FileText, ChevronDown, ChevronRight, Hash, CheckCircle, 
   AlertTriangle, Info, Target, Users, Zap, Shield, Database,
   ArrowRight, Copy, Download, Eye, Edit3, Save, X, FileEdit,
-  Upload, Download as DownloadIcon
-} from 'lucide-react';
+  Upload
+} = GlobalIcons;
+const DownloadIcon = GlobalIcons.Download; // Handle alias
 
 const EditableTRDFormatter = ({ 
   content, 

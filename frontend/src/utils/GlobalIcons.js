@@ -70,6 +70,51 @@ const GlobalIcons = {
   Link: () => <span style={{fontSize: '16px'}}>🔗</span>,
   LogOut: () => <span style={{fontSize: '16px'}}>🚪</span>,
   
+  // Additional icons for components
+  Lightbulb: () => <span style={{fontSize: '16px'}}>💡</span>,
+  RefreshCw: () => <span style={{fontSize: '16px'}}>🔄</span>,
+  Star: () => <span style={{fontSize: '16px'}}>⭐</span>,
+  MessageSquare: () => <span style={{fontSize: '16px'}}>💬</span>,
+  ThumbsUp: () => <span style={{fontSize: '16px'}}>👍</span>,
+  ThumbsDown: () => <span style={{fontSize: '16px'}}>👎</span>,
+  BookOpen: () => <span style={{fontSize: '16px'}}>📖</span>,
+  Home: () => <span style={{fontSize: '16px'}}>🏠</span>,
+  
+  // Translation and language icons
+  Languages: () => <span style={{fontSize: '16px'}}>🌍</span>,
+  Globe: () => <span style={{fontSize: '16px'}}>🌐</span>,
+  
+  // Comment and editing icons
+  MessageCircle: () => <span style={{fontSize: '16px'}}>💬</span>,
+  Edit: () => <span style={{fontSize: '16px'}}>✏️</span>,
+  Save: () => <span style={{fontSize: '16px'}}>💾</span>,
+  Trash: () => <span style={{fontSize: '16px'}}>🗑️</span>,
+  
+  // Professional formatter icons
+  FileCheck: () => <span style={{fontSize: '16px'}}>✅</span>,
+  Archive: () => <span style={{fontSize: '16px'}}>📦</span>,
+  
+  // Additional sorting and editing icons
+  SortAsc: () => <span style={{fontSize: '16px'}}>🔼</span>,
+  SortDesc: () => <span style={{fontSize: '16px'}}>🔽</span>,
+  FileEdit: () => <span style={{fontSize: '16px'}}>📝</span>,
+  
+  // Mapping for aliases
+  Languages: () => <span style={{fontSize: '16px'}}>🌍</span>,
+  Globe: () => <span style={{fontSize: '16px'}}>🌐</span>,
+  
+  // Additional icons for remaining components
+  MoreVertical: () => <span style={{fontSize: '16px'}}>⋮</span>,
+  Edit3: () => <span style={{fontSize: '16px'}}>✏️</span>,
+  Trash2: () => <span style={{fontSize: '16px'}}>🗑️</span>,
+  Reply: () => <span style={{fontSize: '16px'}}>↩️</span>,
+  Flag: () => <span style={{fontSize: '16px'}}>🚩</span>,
+  Unlock: () => <span style={{fontSize: '16px'}}>🔓</span>,
+  Hash: () => <span style={{fontSize: '16px'}}>#</span>,
+  Info: () => <span style={{fontSize: '16px'}}>ℹ️</span>,
+  Database: () => <span style={{fontSize: '16px'}}>🗄️</span>,
+  Send: () => <span style={{fontSize: '16px'}}>📤</span>,
+  
   // Authentication
   Lock: () => <span style={{fontSize: '16px'}}>🔒</span>,
   Shield: () => <span style={{fontSize: '16px'}}>🛡️</span>,

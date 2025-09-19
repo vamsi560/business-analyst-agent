@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { 
   Cloud, 
   Folder, 
   FileText, 
@@ -10,7 +13,7 @@ import {
   ChevronDown,
   Home,
   Search
-} from 'lucide-react';
+} = GlobalIcons;
 
 const OneDrivePicker = ({ 
   onFileSelect, 

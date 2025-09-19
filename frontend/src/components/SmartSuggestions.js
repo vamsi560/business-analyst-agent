@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import GlobalIcons from '../utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { 
   Lightbulb, CheckCircle, XCircle, AlertTriangle, 
   FileText, Target, Users, Clock, TrendingUp,
   ChevronDown, ChevronUp, RefreshCw, Star,
   MessageSquare, ThumbsUp, ThumbsDown, BookOpen
-} from 'lucide-react';
+} = GlobalIcons;
 
 const SmartSuggestions = ({ 
   document, 

@@ -1,5 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { UploadCloud, FileText, ListCollapse, User, Folder, Clock, Settings, ArrowUpTray, UserCircle, CheckCircle, XCircle } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import GlobalIcons from './utils/GlobalIcons';
+
+// Extract icons for backward compatibility
+const { UploadCloud, FileText, ListCollapse, User, Folder, Clock, Settings, CheckCircle, XCircle } = GlobalIcons;
+const ArrowUpTray = GlobalIcons.Upload; // Map ArrowUpTray to Upload
+const UserCircle = GlobalIcons.User; // Map UserCircle to User
 
 const Sidebar = () => (
   <aside className="h-screen w-64 bg-white border-r flex flex-col justify-between fixed left-0 top-0 z-20">
