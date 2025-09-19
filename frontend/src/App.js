@@ -1,15 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import GlobalIcons from './utils/GlobalIcons';
-
-// Create local references to icons for backward compatibility
-const {
-    UploadCloud, FileText, ListCollapse, Folder, Clock, Settings, CheckCircle, XCircle, 
-    ChevronDown, ChevronUp, ChevronRight, Search, Copy, AlertTriangle,
-    TrendingUp, Users, Activity, BarChart3, Target, Zap, Eye, Download,
-    Bell, User, Calendar, PieChart, ArrowRight, ArrowLeft, Menu, Plus, Link, LogOut, Cloud, X
-} = GlobalIcons;
-const SendIcon = GlobalIcons.SendIcon;
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import JSZip from 'jszip';
@@ -23,6 +13,16 @@ import ResponsiveLayout, { ResponsiveGrid, ResponsiveCard, ResponsiveButton, Res
 import SmartSuggestions from './components/SmartSuggestions';
 import RealTimeComments from './components/RealTimeComments';
 import MultiLanguageSupport from './components/MultiLanguageSupport';
+import GlobalIcons from './utils/GlobalIcons';
+
+// Create local references to icons for backward compatibility
+const {
+    UploadCloud, FileText, ListCollapse, Folder, Clock, Settings, CheckCircle, XCircle, 
+    ChevronDown, ChevronUp, ChevronRight, Search, Copy, AlertTriangle,
+    TrendingUp, Users, Activity, BarChart3, Target, Zap, Eye, Download,
+    Bell, User, Calendar, PieChart, ArrowRight, ArrowLeft, Menu, Plus, Link, LogOut, Cloud, X
+} = GlobalIcons;
+const SendIcon = GlobalIcons.SendIcon;
 
 // API base URL - use environment variable or fallback to localhost
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000';

@@ -13,12 +13,11 @@ import ReactFlow, {
   getTransformForBounds,
 } from 'reactflow';
 import { toPng } from 'html-to-image';
+import 'reactflow/dist/style.css';
 import GlobalIcons from '../utils/GlobalIcons';
 
 // Extract icons for backward compatibility
 const { Download, ZoomIn, ZoomOut, RotateCcw, Maximize2 } = GlobalIcons;
-
-import 'reactflow/dist/style.css';
 
 // Professional Business Node Types
 const DatabaseNode = ({ data, isConnectable }) => {
