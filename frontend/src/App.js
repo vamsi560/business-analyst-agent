@@ -6,9 +6,7 @@ import LoginPage from './LoginPage';
 import OneDrivePicker from './components/OneDrivePicker';
 import EnhancedDocumentViewer from './components/EnhancedDocumentViewer';
 import AdvancedSearch from './components/AdvancedSearch';
-import SmartSuggestions from './components/SmartSuggestions';
 import RealTimeComments from './components/RealTimeComments';
-import MultiLanguageSupport from './components/MultiLanguageSupport';
 import GlobalIcons from './utils/GlobalIcons';
 
 // Create local references to icons for backward compatibility
@@ -16,7 +14,7 @@ const {
     UploadCloud, FileText, ListCollapse, Folder, Clock, Settings, CheckCircle, XCircle, 
     ChevronDown, ChevronUp, ChevronRight, Search, Copy, AlertTriangle,
     Users, Activity, BarChart3, Target, Zap, Eye, Download,
-    Bell, User, Plus, Link, LogOut, Cloud, X
+    Bell, User, Plus, Link, LogOut, Cloud, X, ArrowRight
 } = GlobalIcons;
 const SendIcon = GlobalIcons.SendIcon;
 
