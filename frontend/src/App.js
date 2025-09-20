@@ -2748,14 +2748,22 @@ function MainApp() {
         ]);
         
         if (isMounted) {
-        if (docsResponse.ok) {
-          const docsData = await docsResponse.json();
-          setDocuments(docsData);
-        }
-        
-        if (analysesResponse.ok) {
-          const analysesData = await analysesResponse.json();
-          setPastAnalyses(analysesData);
+          if (docsResponse.ok) {
+            const docsData = await docsResponse.json();
+            // Handle both old format (array) and new format (object with documents array)
+            setDocuments(Array.isArray(docsData) ? docsData : (docsData.documents || []));
+          } else {
+            console.log('Documents endpoint not available yet');
+            setDocuments([]);
+          }
+          
+          if (analysesResponse.ok) {
+            const analysesData = await analysesResponse.json();
+            // Handle both old format (array) and new format (object with analyses array)
+            setPastAnalyses(Array.isArray(analysesData) ? analysesData : (analysesData.analyses || []));
+          } else {
+            console.log('Analyses endpoint not available yet');
+            setPastAnalyses([]);
           }
         }
       } catch (error) {

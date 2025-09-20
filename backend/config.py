@@ -39,7 +39,7 @@ ADO_PROJECT_NAME = 'Backstage'
 # Azure DevOps Personal Access Token - Updated with new token
 ADO_PAT = 'DHDzeRhCouK9QI5q2q0cgu7OJpwKU7bJzkwvq2HxZhOquS4qkdxUJQQJ99BIACAAAAAAhliiAAASAZDO39lF'
 
-# Gemini API Key
+# Gemini API Key - hardcoded for now
 GEMINI_API_KEY = 'AIzaSyA5_KnR58T2MTG4oOvBeAqbd8idJCdOlRA'
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 

@@ -16,8 +16,13 @@ from psycopg2.extras import RealDictCursor
 # DATABASE CONFIGURATION
 # ============================================================================
 
-# PostgreSQL Configuration
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql+psycopg2://bauser:Valuemomentum123@baagent.postgres.database.azure.com:5432/ba_agent')
+# PostgreSQL Configuration - hardcoded for now
+# Note: Using SQLite for Vercel compatibility, PostgreSQL for local development
+POSTGRES_URL = 'postgresql+psycopg2://bauser:Valuemomentum123@baagent.postgres.database.azure.com:5432/ba_agent'
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///ba_agent.db')  # Default to SQLite for Vercel
+
+# For local development with PostgreSQL, set environment variable:
+# DATABASE_URL=postgresql+psycopg2://bauser:Valuemomentum123@baagent.postgres.database.azure.com:5432/ba_agent
 
 # Create SQLAlchemy engine and session
 engine = create_engine(DATABASE_URL, echo=False)

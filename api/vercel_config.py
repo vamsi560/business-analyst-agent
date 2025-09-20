@@ -9,6 +9,7 @@ load_dotenv()
 
 
 # Database Configuration - Use SQLite for Vercel compatibility
+# Hardcoded PostgreSQL URL for reference: postgresql+psycopg2://bauser:Valuemomentum123@baagent.postgres.database.azure.com:5432/ba_agent
 # For production with PostgreSQL, use environment variable: DATABASE_URL
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///ba_agent.db')
 
@@ -28,7 +29,7 @@ ADO_ORGANIZATION_URL = 'https://dev.azure.com/prayankagochipatula/'
 ADO_PROJECT_NAME = 'Backstage'
 ADO_PAT = 'DHDzeRhCouK9QI5q2q0cgu7OJpwKU7bJzkwvq2HxZhOquS4qkdxUJQQJ99BIACAAAAAAhliiAAASAZDO39lF'
 
-# Gemini API Configuration
+# Gemini API Configuration - hardcoded for now
 GEMINI_API_KEY = 'AIzaSyA5_KnR58T2MTG4oOvBeAqbd8idJCdOlRA'
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 

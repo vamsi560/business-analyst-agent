@@ -37,11 +37,18 @@ const OneDrivePicker = ({
     try {
       // Check OneDrive connection status first
       const statusResponse = await fetch('/api/integrations/onedrive/status');
+      
+      if (!statusResponse.ok) {
+        setConnectionStatus('not_configured');
+        setError('OneDrive API not available in current deployment.');
+        return;
+      }
+      
       const statusData = await statusResponse.json();
       
       if (!statusData.configured) {
         setConnectionStatus('not_configured');
-        setError('OneDrive integration not configured on the server.');
+        setError(statusData.message || 'OneDrive integration not configured on the server.');
         return;
       }
       
