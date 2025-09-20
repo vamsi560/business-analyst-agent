@@ -83,35 +83,62 @@ def init_sqlite_db():
         conn.commit()
         conn.close()
         print("✅ SQLite database initialized successfully")
+        return True
     except Exception as e:
         print(f"❌ Error initializing SQLite database: {e}")
+        return False
 
 # Initialize database on startup
-init_sqlite_db()
+try:
+    db_init_success = init_sqlite_db()
+    print(f"Database initialization: {'Success' if db_init_success else 'Failed'}")
+except Exception as e:
+    print(f"❌ Critical error during database initialization: {e}")
+    db_init_success = False
 
 # --- Health Check Routes ---
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    return jsonify({
-        'status': 'healthy',
-        'environment': 'vercel',
-        'database_configured': bool(DATABASE_URL),
-        'gemini_configured': bool(GEMINI_API_KEY)
-    })
+    try:
+        return jsonify({
+            'status': 'healthy',
+            'environment': 'vercel',
+            'database_configured': bool(DATABASE_URL),
+            'gemini_configured': bool(GEMINI_API_KEY),
+            'database_initialized': db_init_success
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
 
 @app.route('/api/vercel-health', methods=['GET'])
 def vercel_health():
-    return jsonify({
-        'status': 'healthy',
-        'environment': 'vercel',
-        'backend_type': 'vercel-optimized'
-    })
+    try:
+        return jsonify({
+            'status': 'healthy',
+            'environment': 'vercel',
+            'backend_type': 'vercel-optimized',
+            'database_initialized': db_init_success
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
 
 # --- Document Management Routes ---
 @app.route('/api/documents', methods=['GET'])
 def get_documents():
     """Get all documents from SQLite database"""
     try:
+        if not db_init_success:
+            return jsonify({
+                'error': 'Database not initialized',
+                'documents': []
+            }), 500
+            
         conn = sqlite3.connect('ba_agent.db')
         cursor = conn.cursor()
         
@@ -123,7 +150,9 @@ def get_documents():
         ''')
         
         documents = []
-        for row in cursor.fetchall():
+        rows = cursor.fetchall()
+        
+        for row in rows:
             doc_id, name, file_type, upload_date, status, user_email, meta_str = row
             
             # Parse meta if it exists
@@ -147,9 +176,11 @@ def get_documents():
         conn.close()
         return jsonify({
             'documents': documents,
-            'total': len(documents)
+            'total': len(documents),
+            'status': 'success'
         })
     except Exception as e:
+        print(f"❌ Error in get_documents: {e}")
         return jsonify({
             'error': 'Failed to retrieve documents',
             'details': str(e),
@@ -160,6 +191,12 @@ def get_documents():
 def get_analyses():
     """Get all analyses from SQLite database"""
     try:
+        if not db_init_success:
+            return jsonify({
+                'error': 'Database not initialized',
+                'analyses': []
+            }), 500
+            
         conn = sqlite3.connect('ba_agent.db')
         cursor = conn.cursor()
         
@@ -171,7 +208,9 @@ def get_analyses():
         ''')
         
         analyses = []
-        for row in cursor.fetchall():
+        rows = cursor.fetchall()
+        
+        for row in rows:
             analysis_id, title, date, status, document_id, user_email = row
             
             analyses.append({
@@ -186,9 +225,11 @@ def get_analyses():
         conn.close()
         return jsonify({
             'analyses': analyses,
-            'total': len(analyses)
+            'total': len(analyses),
+            'status': 'success'
         })
     except Exception as e:
+        print(f"❌ Error in get_analyses: {e}")
         return jsonify({
             'error': 'Failed to retrieve analyses',
             'details': str(e),
@@ -202,11 +243,23 @@ def generate_content():
     try:
         data = request.get_json()
         if not data:
-            return jsonify({'error': 'No data provided'}), 400
+            return jsonify({
+                'error': 'No data provided',
+                'status': 'error'
+            }), 400
         
         prompt = data.get('prompt', '')
         if not prompt:
-            return jsonify({'error': 'No prompt provided'}), 400
+            return jsonify({
+                'error': 'No prompt provided',
+                'status': 'error'
+            }), 400
+        
+        if not GEMINI_API_KEY:
+            return jsonify({
+                'error': 'Gemini API key not configured',
+                'status': 'error'
+            }), 500
         
         # Import requests for API calls
         import requests
@@ -247,45 +300,84 @@ def generate_content():
             
             return jsonify({
                 'error': 'Unexpected response format from Gemini API',
-                'details': result
+                'details': result,
+                'status': 'error'
             }), 500
         else:
             return jsonify({
                 'error': f'Gemini API error: {response.status_code}',
-                'details': response.text
+                'details': response.text,
+                'status': 'error'
             }), 500
             
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Network error in generate_content: {e}")
+        return jsonify({
+            'error': 'Network error calling Gemini API',
+            'details': str(e),
+            'status': 'error'
+        }), 500
     except Exception as e:
+        print(f"❌ Error in generate_content: {e}")
         return jsonify({
             'error': 'Failed to generate content',
-            'details': str(e)
+            'details': str(e),
+            'status': 'error'
         }), 500
 
 # --- OneDrive Integration Routes ---
 @app.route('/api/integrations/onedrive/status', methods=['GET'])
 def onedrive_status():
     """Check OneDrive integration status"""
-    return jsonify({
-        'configured': False,
-        'user_connected': False,
-        'message': 'OneDrive integration not yet configured for Vercel deployment'
-    })
+    try:
+        return jsonify({
+            'configured': False,
+            'user_connected': False,
+            'message': 'OneDrive integration not yet configured for Vercel deployment',
+            'status': 'success'
+        })
+    except Exception as e:
+        print(f"❌ Error in onedrive_status: {e}")
+        return jsonify({
+            'error': 'Failed to check OneDrive status',
+            'details': str(e),
+            'configured': False,
+            'user_connected': False
+        }), 500
 
 @app.route('/api/integrations/onedrive/auth', methods=['GET'])
 def onedrive_auth():
     """OneDrive authentication endpoint"""
-    return jsonify({
-        'auth_url': None,
-        'message': 'OneDrive authentication not yet implemented for Vercel deployment'
-    })
+    try:
+        return jsonify({
+            'auth_url': None,
+            'message': 'OneDrive authentication not yet implemented for Vercel deployment',
+            'status': 'success'
+        })
+    except Exception as e:
+        print(f"❌ Error in onedrive_auth: {e}")
+        return jsonify({
+            'error': 'Failed to get OneDrive auth URL',
+            'details': str(e),
+            'auth_url': None
+        }), 500
 
 @app.route('/api/integrations/onedrive/files', methods=['GET'])
 def onedrive_files():
     """Get OneDrive files"""
-    return jsonify({
-        'files': [],
-        'message': 'OneDrive file access not yet implemented for Vercel deployment'
-    })
+    try:
+        return jsonify({
+            'files': [],
+            'message': 'OneDrive file access not yet implemented for Vercel deployment',
+            'status': 'success'
+        })
+    except Exception as e:
+        print(f"❌ Error in onedrive_files: {e}")
+        return jsonify({
+            'error': 'Failed to get OneDrive files',
+            'details': str(e),
+            'files': []
+        }), 500
 
 # --- Mermaid Rendering Routes ---
 @app.route('/api/render_mermaid', methods=['POST'])
@@ -313,6 +405,7 @@ def not_found(error):
     return jsonify({
         'error': 'Not Found',
         'message': 'The requested API endpoint does not exist',
+        'status': 'error',
         'available_endpoints': [
             '/api/health',
             '/api/vercel-health',
@@ -330,7 +423,20 @@ def not_found(error):
 def internal_error(error):
     return jsonify({
         'error': 'Internal Server Error',
-        'message': 'An unexpected error occurred'
+        'message': 'An unexpected error occurred',
+        'status': 'error',
+        'details': str(error) if error else 'Unknown error'
+    }), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Handle all uncaught exceptions"""
+    print(f"❌ Unhandled exception: {e}")
+    return jsonify({
+        'error': 'Unexpected Error',
+        'message': 'An unexpected error occurred',
+        'status': 'error',
+        'details': str(e)
     }), 500
 
 # --- Development Server ---
