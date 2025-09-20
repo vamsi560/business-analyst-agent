@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import GlobalIcons from '../utils/GlobalIcons';
 
@@ -30,13 +30,7 @@ const OneDrivePicker = ({
   const [connectionStatus, setConnectionStatus] = useState('checking');
   const [, setAuthUrl] = useState(null);
 
-  useEffect(() => {
-    if (isVisible) {
-      loadOneDriveContent();
-    }
-  }, [isVisible, currentPath, loadOneDriveContent]);
-
-  const loadOneDriveContent = async () => {
+  const loadOneDriveContent = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -115,7 +109,13 @@ const OneDrivePicker = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPath]);
+
+  useEffect(() => {
+    if (isVisible) {
+      loadOneDriveContent();
+    }
+  }, [isVisible, loadOneDriveContent]);
 
   const handleFolderClick = (folder) => {
     setCurrentPath([...currentPath, folder.id]);

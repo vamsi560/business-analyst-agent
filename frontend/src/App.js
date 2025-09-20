@@ -20,7 +20,8 @@ const {
 const SendIcon = GlobalIcons.SendIcon;
 
 // API base URL - use environment variable or fallback to localhost
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000';
+// API Configuration - use relative URL for production, localhost for development
+const API_BASE_URL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://127.0.0.1:5000');
 
 // React Error Boundary to catch DOM manipulation errors
 class ErrorBoundary extends React.Component {
