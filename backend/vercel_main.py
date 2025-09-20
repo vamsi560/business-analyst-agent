@@ -10,15 +10,33 @@ import json
 import uuid
 from datetime import datetime
 
+# Add api directory to path for vercel_config import
+api_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'api')
+if api_path not in sys.path:
+    sys.path.insert(0, api_path)
+
 # Disable Qdrant for Vercel deployment
 os.environ['QDRANT_ENABLED'] = 'false'
 
 # Import Vercel configuration
-from vercel_config import (
-    DATABASE_URL, GEMINI_API_KEY, GEMINI_API_URL,
-    ACS_CONNECTION_STRING, ACS_SENDER_ADDRESS,
-    DEBUG, validate_config
-)
+try:
+    from vercel_config import (
+        DATABASE_URL, GEMINI_API_KEY, GEMINI_API_URL,
+        ACS_CONNECTION_STRING, ACS_SENDER_ADDRESS,
+        DEBUG, validate_config
+    )
+    print("✅ Vercel config imported successfully")
+except ImportError as e:
+    print(f"⚠️ Could not import vercel_config: {e}")
+    # Hardcoded fallback values
+    DATABASE_URL = 'sqlite:///ba_agent.db'
+    GEMINI_API_KEY = 'AIzaSyA5_KnR58T2MTG4oOvBeAqbd8idJCdOlRA'
+    GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+    ACS_CONNECTION_STRING = ''
+    ACS_SENDER_ADDRESS = ''
+    DEBUG = False
+    def validate_config():
+        pass
 
 app = Flask(__name__)
 CORS(app)

@@ -9,8 +9,15 @@ from sqlalchemy import create_engine, Column, String, DateTime, Text, Integer, J
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
-import psycopg2
-from psycopg2.extras import RealDictCursor
+
+# Conditional import of psycopg2 - only needed for PostgreSQL
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    print("⚠️ psycopg2 not available - PostgreSQL features disabled")
+    PSYCOPG2_AVAILABLE = False
 
 # ============================================================================
 # DATABASE CONFIGURATION
@@ -499,8 +506,16 @@ def delete_from_vector_db(point_id: str, collection_name: str = "documents"):
 
 def save_document_to_db_direct(filename: str, file_type: str, file_path: str, content: str):
     """Save document using direct psycopg2 connection"""
+    if not PSYCOPG2_AVAILABLE:
+        print("❌ psycopg2 not available - cannot use direct PostgreSQL connection")
+        return False
+        
     try:
         # Extract connection details from DATABASE_URL
+        if not DATABASE_URL.startswith('postgresql'):
+            print("❌ Direct connection only works with PostgreSQL URLs")
+            return False
+            
         db_url = DATABASE_URL.replace('postgresql+psycopg2://', '')
         user_pass, host_port_db = db_url.split('@')
         user, password = user_pass.split(':')
@@ -532,8 +547,16 @@ def save_document_to_db_direct(filename: str, file_type: str, file_path: str, co
 
 def get_all_documents_from_db_direct():
     """Get all documents using direct psycopg2 connection"""
+    if not PSYCOPG2_AVAILABLE:
+        print("❌ psycopg2 not available - cannot use direct PostgreSQL connection")
+        return []
+        
     try:
         # Extract connection details from DATABASE_URL
+        if not DATABASE_URL.startswith('postgresql'):
+            print("❌ Direct connection only works with PostgreSQL URLs")
+            return []
+            
         db_url = DATABASE_URL.replace('postgresql+psycopg2://', '')
         user_pass, host_port_db = db_url.split('@')
         user, password = user_pass.split(':')
@@ -562,8 +585,16 @@ def get_all_documents_from_db_direct():
 
 def check_document_exists_by_name_direct(filename: str):
     """Check if document exists by name using direct connection"""
+    if not PSYCOPG2_AVAILABLE:
+        print("❌ psycopg2 not available - cannot use direct PostgreSQL connection")
+        return False
+        
     try:
         # Extract connection details from DATABASE_URL
+        if not DATABASE_URL.startswith('postgresql'):
+            print("❌ Direct connection only works with PostgreSQL URLs")
+            return False
+            
         db_url = DATABASE_URL.replace('postgresql+psycopg2://', '')
         user_pass, host_port_db = db_url.split('@')
         user, password = user_pass.split(':')
